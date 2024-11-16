@@ -44,8 +44,8 @@ input {
 }
 
 .login-form {
-  //background: #222;
-  //box-shadow: 0 0 1rem rgba(0,0,0,0.3);
+  /* background: #222; */
+  /* box-shadow: 0 0 1rem rgba(0,0,0,0.3); */
   min-height: 10rem;
   margin: auto;
   max-width: 50%;
@@ -53,8 +53,8 @@ input {
 }
 
 .login-text {
-  //background: hsl(40,30,60);
-  //border-bottom: .5rem solid white;
+  /* background: hsl(40,30,60); */
+  /* border-bottom: .5rem solid white; */
   color: white;
   font-size: 1.5rem;
   margin: 0 auto;
@@ -62,7 +62,7 @@ input {
   padding: .5rem;
   text-align: center;
 
-  //text-shadow: 1px -1px 0 rgba(0,0,0,0.3);
+  /* text-shadow: 1px -1px 0 rgba(0,0,0,0.3); */
   .fa-stack-1x {
     color: black;
   }
@@ -88,7 +88,7 @@ input {
 }
 
 .login-forgot-pass {
-  //border-bottom: 1px solid white;
+  /* border-bottom: 1px solid white; */
   bottom: 0;
   color: white;
   cursor: pointer;
@@ -99,7 +99,7 @@ input {
   padding: .5rem;
   position: absolute;
   text-align: center;
-  //text-decoration: none;
+  /* text-decoration: none; */
   width: 100%;
 
   &:hover {
@@ -137,11 +137,22 @@ input {
 }
 
 .underlay-photo {
-  animation: hue-rotate 6s infinite;
+  animation: hue-rotate 6s infinite linear; /* Agregado el tipo de interpolación */
   background: url('https://31.media.tumblr.com/41c01e3f366d61793e5a3df70e46b462/tumblr_n4vc8sDHsd1st5lhmo1_1280.jpg');
   background-size: cover;
   -webkit-filter: grayscale(30%);
+  filter: grayscale(30%);
   z-index: -1;
+}
+
+/* Definición de la animación */
+@keyframes hue-rotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }
 
 .underlay-black {
