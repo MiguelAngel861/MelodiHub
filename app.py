@@ -6,10 +6,11 @@ import urllib.parse
 
 app = Flask(__name__)
 
+app.secret_key = '3lvKQGLL84O2599qeO21KFqbqYtSQfKb'
 
 CLIENT_ID = 'c9f3386b76074211a1a2e478661ea36c'
 CLIENT_SECRET = 'd11a3cf5187c41188ab53ebce5ffc8d3'
-REDIRECT_URI = 'http://localhost:5000/callback'
+REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 
 #constantes para las rutas
 AUTHN_URL = 'https://accounts.spotify.com/authorize'
