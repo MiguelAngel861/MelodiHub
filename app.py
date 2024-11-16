@@ -1,5 +1,5 @@
 
-from flask import Flask, redirect, url_for, request, session
+from flask import Flask, redirect, url_for, request, session, render_template
 import requests
 import urllib.parse
 
@@ -19,7 +19,7 @@ SCOPE = 'user-library-read'
 
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    return render_template ("login.html")
 
 @app.route('/login')
 def login():
