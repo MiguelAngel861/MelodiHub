@@ -138,7 +138,7 @@ input {
 
 .underlay-photo {
   animation: hue-rotate 6s infinite linear; /* Agregado el tipo de interpolación */
-  background: url('https://31.media.tumblr.com/41c01e3f366d61793e5a3df70e46b462/tumblr_n4vc8sDHsd1st5lhmo1_1280.jpg');
+  background: url('static/images/fondoCerati.png');
   background-size: cover;
   -webkit-filter: grayscale(30%);
   filter: grayscale(30%);
