@@ -1,7 +1,5 @@
 from flask import Flask, redirect, url_for, request, session, render_template
 import requests
-import urllib.parse
-from spotipy import Spotify
 
 app = Flask(__name__)
 
@@ -15,7 +13,7 @@ REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 AUTHN_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
-SCOPE = 'user-library-read, user-read-recently-played'
+SCOPE = 'user-read-email user-read-private user-read-recently-played user-library-read'
 
 @app.route('/')
 def index():
@@ -32,8 +30,7 @@ def callback():
     # Obtener el código de autorización de la URL
     code = request.args.get('code')
     # Solicitar el token de acceso
-    token_url = "https://accounts.spotify.com/api/token"
-    response = requests.post(token_url, data={
+    response = requests.post(TOKEN_URL, data={
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": REDIRECT_URI,
@@ -42,23 +39,22 @@ def callback():
     })
     data = response.json()
     session['access_token'] = data.get('access_token')
-    # Redireccionar a una página después del login
     return redirect(url_for('profile'))
 
 @app.route('/profile')
 def profile():
     # Acceder a los datos del perfil del usuario
     headers = {"Authorization": f"Bearer {session['access_token']}"}
-    response = requests.get("https://api.spotify.com/v1/me", headers=headers)
+    response = requests.get(f"{API_BASE_URL}me", headers=headers)
     user_info = response.json()
-    return render_template("perfilUsuario.html",  user_info=user_info) #f"Bienvenido, {user_info['display_name']}!"
+    return render_template("perfilUsuario.html", user_info=user_info)
 
 @app.route('/historial')
-def Historial():
-    #canciones escuchadas la persiona
+def historial():
+    # Obtener canciones escuchadas recientemente
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     params = {"limit": 50}
-    response = requests.get("https://api.spotify.com/v1/me/player/recently-played", headers=headers, params=params)
+    response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params=params)
     if response.status_code == 200:
         data = response.json()
         tracks = [
@@ -70,6 +66,27 @@ def Historial():
             for item in data.get('items', [])
         ]
         return render_template("historial.html", tracks=tracks)
+    else:
+        return f"Error: {response.status_code} - {response.text}"
+
+@app.route('/gustados')
+def liked_tracks():
+    # Obtener las últimas 50 canciones a las que el usuario ha dado "like"
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    params = {"limit": 50}
+    response = requests.get(f"{API_BASE_URL}me/tracks", headers=headers, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        tracks = [
+            {
+                "track_name": item['track']['name'],
+                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']),
+                "album_name": item['track']['album']['name'],
+                "added_at": item['added_at']
+            }
+            for item in data.get('items', [])
+        ]
+        return render_template("canciones.html", tracks=tracks)
     else:
         return f"Error: {response.status_code} - {response.text}"
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canciones Guardadas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* General */
+        body {
+            background-color: #F5F5F5; /* Gris claro */
+            font-family: 'Inter', sans-serif;
+            color: #333333; /* Gris oscuro */
+            margin: 0;
+            padding: 0;
+        }
+  
+        /* Navbar */
+        .navbar {
+            background-color: #A0C4FF; /* Azul pastel claro */
+        }
+  
+        .navbar-brand {
+            color: #2B3A67 !important; /* Azul oscuro */
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+  
+        .nav-link {
+            color: #495867 !important; /* Gris azulado */
+            font-size: 1rem;
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+  
+        .nav-link:hover {
+            color: #FFD6A5 !important; /* Durazno claro */
+            background-color: #A0C4FF;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+  
+        /* Títulos */
+        h1 {
+            color: #2B3A67; /* Azul oscuro */
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 20px; /* Espacio entre la navbar y el título */
+        }
+  
+        /* Tabla */
+        .table {
+            background-color: #F5F5F5; /* Mismo color que el fondo del body */
+            color: #333333; /* Gris oscuro */
+            border: 1px solid #BDBDBD; /* Gris claro */
+            border-radius: 10px;
+            overflow: hidden;
+        }
+  
+        .table thead {
+            background-color: #BEE3DB; /* Verde pastel claro */
+            color: #333333; /* Gris oscuro */
+        }
+  
+        .table tbody tr:nth-child(odd) {
+            background-color: #E3F2FD; /* Azul claro */
+        }
+  
+        .table tbody tr:nth-child(even) {
+            background-color: #F1F8E9; /* Verde muy claro */
+        }
+  
+        .table tbody tr:hover {
+            background-color: #FFEBEE; /* Rosa claro */
+            cursor: pointer;
+        }
+  
+        /* Dropdown */
+        .dropdown-item {
+            color: #333333 !important;
+        }
+  
+        .dropdown-item:hover {
+            background-color: #FFCAD4; /* Rosa pastel */
+            color: #000000 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="Inicio.html">Repify</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/gustados">Canciones favoritas</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/historial">Historial de canciones</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Canciones que te han gustado recientemente</a>
+              </li>
+            </ul>
+            <!-- Botón alineado a la derecha -->
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Opciones de cuenta</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/profile">Perfil de usuario</a></li>
+                    <li><a class="dropdown-item" href="/login">Iniciar sesión</a></li>
+                    <li><a class="dropdown-item" href="perfilUsuario.html">Terminar sesión</a></li>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    
+    <div class="container mt-4">
+        <h1 class="text-center">Tus Canciones Guardadas</h1>
+        <table class="table table-striped table-hover mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre de la Canción</th>
+                    <th>Artista(s)</th>
+                    <th>Álbum</th>
+                    <th>Agregado el</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in tracks %}
+                <tr>
+                    <td>{{ track.track_name }}</td>
+                    <td>{{ track.artist_name }}</td>
+                    <td>{{ track.album_name }}</td>
+                    <td>{{ track.added_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
