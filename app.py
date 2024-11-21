@@ -56,8 +56,24 @@ def profile():
     return f"Bienvenido, {user_info['display_name']}!"
 
 @app.route("/Historial")
-def historialCanciones():
-    print("hello")
+def recently_played():
+    # Obtener las últimas 50 canciones escuchadas por el usuario
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    params = {"limit": 50}
+    response = requests.get("https://api.spotify.com/v1/me/player/recently-played", headers=headers, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        tracks = [
+            {
+                "track_name": item['track']['name'],
+                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']),
+                "played_at": item['played_at']
+            }
+            for item in data.get('items', [])
+        ]
+        return render_template("historial.html", tracks=tracks)
+    else:
+        return f"Error: {response.status_code} - {response.text}"
     
 if __name__ == '_main_':
     app.run(debug=True)
