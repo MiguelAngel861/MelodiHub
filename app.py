@@ -55,5 +55,9 @@ def profile():
     user_info = response.json()
     return f"Bienvenido, {user_info['display_name']}!"
 
+@app.route("/Historial")
+def historialCanciones():
+    print("hello")
+    
 if __name__ == '_main_':
     app.run(debug=True)
