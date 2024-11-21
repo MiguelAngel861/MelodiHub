@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, session, render_template
 import requests
 import urllib.parse
+from spotipy import Spotify
 
 app = Flask(__name__)
 
@@ -50,7 +51,7 @@ def profile():
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     response = requests.get("https://api.spotify.com/v1/me", headers=headers)
     user_info = response.json()
-    return f"Bienvenido, {user_info['display_name']}!"
+    return render_template("perfilUsuario.html",  user_info=user_info) #f"Bienvenido, {user_info['display_name']}!"
 
 @app.route('/historial')
 def Historial():
