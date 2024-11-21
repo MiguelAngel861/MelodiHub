@@ -90,5 +90,40 @@ def liked_tracks():
     else:
         return f"Error: {response.status_code} - {response.text}"
 
+@app.route('/repifyWawa')
+def repify():
+    # Obtener las canciones del historial
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    historial_response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params={"limit": 50})
+    
+    # Obtener las canciones guardadas
+    liked_response = requests.get(f"{API_BASE_URL}me/tracks", headers=headers, params={"limit": 50})
+    
+    if historial_response.status_code == 200 and liked_response.status_code == 200:
+        historial_data = historial_response.json()
+        liked_data = liked_response.json()
+
+        # Extraer canciones del historial
+        historial_tracks = {
+            item['track']['id']: {
+                "track_name": item['track']['name'],
+                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']),
+                "album_name": item['track']['album']['name'],
+                "played_at": item['played_at']
+            }
+            for item in historial_data.get('items', [])
+        }
+
+        # Extraer canciones guardadas
+        liked_tracks = {
+            item['track']['id']: {
+                "track_name": item['track']['name'],
+                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']),
+                "album_name": item['track']['album']['name'],
+                "added_at": item['added_at']
+            }
+            for item in liked_data.get('items', [])
+        }
+
 if __name__ == '__main__':
     app.run(debug=True)
