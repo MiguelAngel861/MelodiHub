@@ -79,7 +79,7 @@ def historial():
 
 @app.route('/gustados')
 def liked_tracks():
-    # Obtener las últimas 50 canciones a las que el usuario ha dado "like"
+    # Obtener las últimas 50 canciones en likes
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     params = {"limit": 50}
     response = requests.get(f"{API_BASE_URL}me/tracks", headers=headers, params=params)
@@ -104,14 +104,14 @@ def repify():
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     historial_response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params={"limit": 50})
     
-    # Obtener las canciones guardadas
+    #canciones guardadas
     liked_response = requests.get(f"{API_BASE_URL}me/tracks", headers=headers, params={"limit": 50})
     
     if historial_response.status_code == 200 and liked_response.status_code == 200:
         historial_data = historial_response.json()
         liked_data = liked_response.json()
 
-        # Extraer canciones del historial
+        #canciones del historial
         historial_tracks = {
             item['track']['id']: {
                 "track_name": item['track']['name'],
@@ -122,7 +122,7 @@ def repify():
             for item in historial_data.get('items', [])
         }
 
-        # Extraer canciones guardadas
+        #canciones guardadas
         liked_tracks = {
             item['track']['id']: {
                 "track_name": item['track']['name'],
@@ -133,7 +133,7 @@ def repify():
             for item in liked_data.get('items', [])
         }
         
-        # Encontrar canciones comunes
+        #canciones en las dos listas
         common_ids = set(historial_tracks.keys()) & set(liked_tracks.keys())
         common_tracks = [historial_tracks[track_id] for track_id in common_ids]
 
@@ -141,6 +141,11 @@ def repify():
     else:
         return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
 
-
+@app.route('/logout')
+def logout():
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    session.clear()
+    
+    return render_template("login.html")
 if __name__ == '__main__':
     app.run(debug=True)
