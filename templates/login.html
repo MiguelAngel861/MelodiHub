@@ -129,9 +129,6 @@ input {
   }
 }
 
-
-
-
 [class*=underlay] {
   left: 0;
   min-height: 100%;
@@ -178,17 +175,17 @@ input {
   <link rel="stylesheet" src="/static/login.css"> 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Iniciar sesion</title>
 </head>
 <body>
-  <form class="login-form">
+  <form class="login-form" action="{{ url_for('login') }}" method="POST"> <!----hola-->
     <p class="login-text">
       <span class="fa-stack fa-lg">
         <i class="fa fa-circle fa-stack-2x" ></i>
         <i classs="fa fa-lock fa-stack-1x"></i>
       </span>
     </p>
-    <input type="submit" name="Login" value="Login with spotify" class="login-submit"/>
+    <input type="submit" name="Login" value="Login with spotify" class="login-submit" action/>
   </form>
   <div class="underlay-photo"></div>
   <div class="underlay-black"></div>
