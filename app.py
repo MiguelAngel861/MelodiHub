@@ -124,6 +124,14 @@ def repify():
             }
             for item in liked_data.get('items', [])
         }
+        
+        # Encontrar canciones comunes
+        common_ids = set(historial_tracks.keys()) & set(liked_tracks.keys())
+        common_tracks = [historial_tracks[track_id] for track_id in common_ids]
+
+        return render_template("repify.html", tracks=common_tracks)
+    else:
+        return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
 
 if __name__ == '__main__':
     app.run(debug=True)
