@@ -13,7 +13,7 @@ REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 AUTHN_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
-SCOPE = 'user-read-email user-read-private user-read-recently-played user-library-read'
+SCOPE = 'user-read-email user-read-private user-read-recently-played user-library-read' #alcances. datos a los que la aplicacion tiene acceso
 
 @app.route('/')
 def index():
@@ -43,16 +43,24 @@ def callback():
 
 @app.route('/profile')
 def profile():
-    # Acceder a los datos del perfil del usuario
+    #Acceder a los datos del perfil del usuario
     headers = {"Authorization": f"Bearer {session['access_token']}"}
+    
+    #solicitud http de tipo para acceder a los datos de perfil usuario 
     response = requests.get(f"{API_BASE_URL}me", headers=headers)
-    user_info = response.json()
+    
+    #se crea una variable que almacenara la respuesta de la api (en formato json). al almacenarse se va a convertir en un diccionario
+    user_info = response.json() #Ejemplo de la respuesta de la api: https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
+    
     return render_template("perfilUsuario.html", user_info=user_info)
 
+# Obtener canciones escuchadas recientemente
 @app.route('/historial')
 def historial():
-    # Obtener canciones escuchadas recientemente
+    #Acceder a los datos del perfil del usuario
     headers = {"Authorization": f"Bearer {session['access_token']}"}
+    
+    #Esta variable funciona para especificar cuantas canciones vamos a pedirle a la api, en este caso vamos a pedir la maxima cantidad (50).
     params = {"limit": 50}
     response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params=params)
     if response.status_code == 200:
@@ -124,6 +132,5 @@ def repify():
             }
             for item in liked_data.get('items', [])
         }
-
 if __name__ == '__main__':
     app.run(debug=True)
