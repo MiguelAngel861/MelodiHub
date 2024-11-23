@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Tracks</title>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="mb-4">Your Top Tracks</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Song</th>
+                    <th>Play</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in tracks %}
+                <tr>
+                    <td>{{ track['name'] }}</td>
+                    <td>
+                        <button 
+                            class="btn btn-primary play-button" 
+                            data-uri="{{ track['uri'] }}">
+                            Play
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+           // Pasamos el token desde Flask al frontend
+            const accessToken = "{{ access_token }}";
+        let player;
+
+        if (accessToken) {
+            console.log(accessToken)
+        } else { console.log("que mal")}
+
+        // Inicializar el SDK de Spotify
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            player = new Spotify.Player({
+                name: 'My Spotify Player',
+                getOAuthToken: cb => { cb(accessToken); },
+                volume: 0.5
+            });
+
+            // Conectar el reproductor
+            player.connect();
+
+            // Agregar evento a los botones de reproducción
+            document.querySelectorAll('.play-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const trackUri = button.getAttribute('data-uri');
+                    playTrack(trackUri);
+                });
+            });
+        };
+
+        // Función para reproducir una canción
+        function playTrack(uri) {
+    fetch('/play', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ uri: uri })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Failed to play track:', data.error);
+        } else {
+            console.log('Success:', data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+    </script>
+</body>
+</html>

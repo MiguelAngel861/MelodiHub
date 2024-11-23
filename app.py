@@ -1,5 +1,6 @@
-from flask import Flask, redirect, url_for, request, session, render_template
+from flask import Flask, redirect, url_for, request, session, render_template, jsonify
 import requests
+
 
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 AUTHN_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
-SCOPE = 'user-read-email user-read-private user-read-recently-played user-library-read' #alcances. datos a los que la aplicacion tiene acceso
+SCOPE = 'user-read-email, user-read-private, user-read-recently-played, user-library-read, user-top-read, user-modify-playback-state, app-remote-control, streaming, user-read-playback-state' #alcances. datos a los que la aplicacion tiene acceso
 
 @app.route('/')
 def index():
@@ -169,6 +170,58 @@ def repify():
     
     else:
         return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
+
+#oBTENER canciones mas escuchadas por el usuario
+def get_user_top_tracks(access_token, time_range='medium_term', limit=10):
+    url = "https://api.spotify.com/v1/me/top/tracks"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    params = {
+        "time_range": time_range,
+        "limit": limit
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()['items']
+    else:
+        return []
+
+@app.route('/tops')
+def top_tracks():
+    if 'access_token' not in session:
+        return redirect(url_for('login'))  # Redirige si no hay token en la sesión
+
+    access_token = session['access_token']
+    tracks = get_user_top_tracks(access_token)
+    return render_template('top.html', tracks=tracks,  access_token=access_token)
+
+#aqui termina la funcion
+
+
+@app.route('/play', methods=['POST'])
+def play():
+    # Obtener los datos enviados desde el frontend (URI de la canción)
+    data = request.get_json()
+    track_uri = data.get('uri')
+    
+    access_token = session['access_token']
+    
+    # Aquí puedes integrar el código para usar el SDK de Spotify o la API para reproducir la canción
+    if track_uri:
+        # Esto puede ser un ejemplo de una solicitud para reproducir una canción con la API de Spotify
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        }
+        # Aquí puedes hacer la solicitud API a Spotify para controlar la reproducción (esto es solo un ejemplo)
+        response = requests.put(f'https://api.spotify.com/v1/me/player/play', headers=headers, json={"uris": [track_uri]})
+        
+        if response.status_code == 204:
+            return jsonify({"message": "Track is now playing!"}), 200
+        else:
+            return jsonify({"error": "Failed to play track."}), 500
+    return jsonify({"error": "No track URI provided"}), 400
 
 @app.route('/logout')
 def logout():
