@@ -63,17 +63,27 @@ def historial():
     #Esta variable funciona para especificar cuantas canciones vamos a pedirle a la api, en este caso vamos a pedir la maxima cantidad (50).
     params = {"limit": 50}
     response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params=params)
+    
+    #Verifica que la respuesta de la api sea positiva
     if response.status_code == 200:
+        #Convierte el json de la respuesta recibida en un diccionario
         data = response.json()
+        
+        #Creamos una lista de diccionarios para especificar la informacion que vamos a tomar (artista, cancion, fecha de reproduccion)
         tracks = [
             {
-                "track_name": item['track']['name'],
-                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']),
+                "track_name": item['track']['name'], 
+                "artist_name": ", ".join(artist['name'] for artist in item['track']['artists']), #', '.join usa como separador ", " y dentro de usa iterable usa un ciclo for para obtener los artistas dentro de esa canion
                 "played_at": item['played_at']
             }
             for item in data.get('items', [])
+            #itera sobre la lista de elementos devuelta json de la api, en caso de que no se hata obtenido nada devolvera una lista vacia
+
         ]
+        #Amigo, track se vuelve una lista de diccionarios (DAMN!!!! he KNOWS PytHON)
+        
         return render_template("historial.html", tracks=tracks)
+    
     else:
         return f"Error: {response.status_code} - {response.text}"
 
@@ -95,6 +105,7 @@ def liked_tracks():
             for item in data.get('items', [])
         ]
         return render_template("canciones.html", tracks=tracks)
+    
     else:
         return f"Error: {response.status_code} - {response.text}"
 
@@ -134,18 +145,37 @@ def repify():
         }
         
         #canciones en las dos listas
+        
+        #Creamos un cojunto de las claves de diccionarios no repetidas con el metodo set
         common_ids = set(historial_tracks.keys()) & set(liked_tracks.keys())
+        
+        #recuperamos los valores perdiod en common_ids (Por favor escuchar "I LAY DOWN MY LIFE FOR YOU" DE JPEGMAFIA)
         common_tracks = [historial_tracks[track_id] for track_id in common_ids]
 
         return render_template("repify.html", tracks=common_tracks)
+    
     else:
         return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
 
 @app.route('/logout')
 def logout():
-    headers = {"Authorization": f"Bearer {session['access_token']}"}
-    session.clear()
+    code = request.args.get('code')
+    
+    # Solicitar el token de acceso
+    response = requests.post(TOKEN_URL, data={
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
+    })
+    
+    data = response.json()
+    session['access_token'] = data.get('access_token')
+    
+    session.clear(session['access_token'])
     
     return render_template("login.html")
+
 if __name__ == '__main__':
     app.run(debug=True)
