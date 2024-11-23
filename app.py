@@ -39,8 +39,9 @@ def callback():
     })
     data = response.json()
     session['access_token'] = data.get('access_token')
+    
     return redirect(url_for('profile'))
-
+    
 @app.route('/profile')
 def profile():
     #Acceder a los datos del perfil del usuario
@@ -57,6 +58,10 @@ def profile():
 # Obtener canciones escuchadas recientemente
 @app.route('/historial')
 def historial():
+    
+    if 'access_token' not in session:
+        return redirect(url_for('login'))
+    
     #Acceder a los datos del perfil del usuario
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     
@@ -89,6 +94,10 @@ def historial():
 
 @app.route('/gustados')
 def liked_tracks():
+    
+    if 'access_token' not in session:
+        return redirect(url_for('login'))
+    
     # Obtener las últimas 50 canciones en likes
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     params = {"limit": 50}
@@ -111,6 +120,10 @@ def liked_tracks():
 
 @app.route('/repifyWawa')
 def repify():
+    
+    if 'access_token' not in session:
+        return redirect(url_for('login'))
+    
     # Obtener las canciones del historial
     headers = {"Authorization": f"Bearer {session['access_token']}"}
     historial_response = requests.get(f"{API_BASE_URL}me/player/recently-played", headers=headers, params={"limit": 50})
@@ -159,6 +172,10 @@ def repify():
 
 @app.route('/logout')
 def logout():
+    
+    if 'access_token' not in session:
+        return redirect(url_for('login'))
+    
     code = request.args.get('code')
     
     # Solicitar el token de acceso
@@ -175,7 +192,11 @@ def logout():
     
     session.clear(session['access_token'])
     
-    return render_template("login.html")
+    return redirect(url_for("/"))
+
+@app.route("/inicio")
+def inicio():
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
