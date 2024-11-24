@@ -171,30 +171,6 @@ def repify():
     else:
         return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
 
-@app.route('/play', methods=['POST'])
-def play():
-    # Obtener los datos enviados desde el frontend (URI de la canción)
-    data = request.get_json()
-    track_uri = data.get('uri')
-    
-    access_token = session['access_token']
-    
-    # Aquí puedes integrar el código para usar el SDK de Spotify o la API para reproducir la canción
-    if track_uri:
-        # Esto puede ser un ejemplo de una solicitud para reproducir una canción con la API de Spotify
-        headers = {
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json'
-        }
-        # Aquí puedes hacer la solicitud API a Spotify para controlar la reproducción (esto es solo un ejemplo)
-        response = requests.put(f'https://api.spotify.com/v1/me/player/play', headers=headers, json={"uris": [track_uri]})
-        
-        if response.status_code == 204:
-            return jsonify({"message": "Track is now playing!"}), 200
-        else:
-            return jsonify({"error": "Failed to play track."}), 500
-    return jsonify({"error": "No track URI provided"}), 400
-
 @app.route("/inicio")
 def inicio():
     return render_template("index.html")
