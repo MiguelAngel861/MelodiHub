@@ -171,34 +171,6 @@ def repify():
     else:
         return f"Error: {historial_response.status_code} o {liked_response.status_code} - Revisa tus permisos o el token de acceso."
 
-#oBTENER canciones mas escuchadas por el usuario
-def get_user_top_tracks(access_token, time_range='medium_term', limit=10):
-    url = "https://api.spotify.com/v1/me/top/tracks"
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-    params = {
-        "time_range": time_range,
-        "limit": limit
-    }
-    response = requests.get(url, headers=headers, params=params)
-    if response.status_code == 200:
-        return response.json()['items']
-    else:
-        return []
-
-@app.route('/tops')
-def top_tracks():
-    if 'access_token' not in session:
-        return redirect(url_for('login'))  # Redirige si no hay token en la sesión
-
-    access_token = session['access_token']
-    tracks = get_user_top_tracks(access_token)
-    return render_template('top.html', tracks=tracks,  access_token=access_token)
-
-#aqui termina la funcion
-
-
 @app.route('/play', methods=['POST'])
 def play():
     # Obtener los datos enviados desde el frontend (URI de la canción)
@@ -222,30 +194,6 @@ def play():
         else:
             return jsonify({"error": "Failed to play track."}), 500
     return jsonify({"error": "No track URI provided"}), 400
-
-@app.route('/logout')
-def logout():
-    
-    if 'access_token' not in session:
-        return redirect(url_for('login'))
-    
-    code = request.args.get('code')
-    
-    # Solicitar el token de acceso
-    response = requests.post(TOKEN_URL, data={
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET
-    })
-    
-    data = response.json()
-    session['access_token'] = data.get('access_token')
-    
-    session.clear(session['access_token'])
-    
-    return redirect(url_for("/"))
 
 @app.route("/inicio")
 def inicio():
