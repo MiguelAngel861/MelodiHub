@@ -1,10 +1,9 @@
 from flask import Flask, redirect, url_for, request, session, render_template, jsonify
 import requests
 
-
 app = Flask(__name__)
 
-app.secret_key = '3lvKQGLL84O2599qeO21KFqbqYtSQfKb'  # Sin esto no funciona, por favor no tocar.
+app.secret_key = ''  # Sin esto no funciona, por favor no tocar.
 
 CLIENT_ID = 'c9f3386b76074211a1a2e478661ea36c'
 CLIENT_SECRET = 'd11a3cf5187c41188ab53ebce5ffc8d3'

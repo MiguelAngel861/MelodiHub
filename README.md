@@ -1,4 +1,4 @@
-# Repify CS50
+# Moodify
 
 #### Video demo: https://youtu.be/dKTLScdHv3g
 
