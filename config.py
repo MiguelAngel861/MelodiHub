@@ -10,6 +10,9 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', '63f4945d921d599f27ae4fdf5bada3f1')
     SERVER_NAME = 'lunarblade.net'
 
+    TEMPLATE_FOLDER = '/views/templates/'
+    STATIC_FOLDER = '/views/static/'
+
     # Flask-Bcrypt
     BCRYPT_LOG_ROUNDS = int(os.getenv('BCRYPT_LOG_ROUNDS', 12))
     BCRYPT_HANDLE_LONG_PASSWORDS = os.getenv(
@@ -49,12 +52,9 @@ class Config:
     # Logging
     LOG_TO_STDOUT = os.getenv('LOG_TO_STDOUT', 'false').lower() in ('true', '1', 't')
 
-
 class DevelopmentConfig(Config):
-    sql = Credentials()
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = f'mysql+mysqlconnector://{sql.mysql_user}:{sql.mysql_pwsd}@{sql.mysql_host}:{sql.mysql_port}/{sql.mysql_db}'
     TEMPLATES_AUTO_RELOAD = True
     BCRYPT_LOG_ROUNDS = int(os.getenv('BCRYPT_LOG_ROUNDS', 4))
 
